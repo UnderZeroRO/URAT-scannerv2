@@ -19,24 +19,17 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Cache Gradle packages
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper/
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
+    - name: Install Gradle
+      run: |
+        sudo apt-get update
+        sudo apt-get install gradle -y
+        gradle --version
 
-    - name: Build APK (assembleDebug)
-      uses: gradle/gradle-build-action@v2
-      with:
-        arguments: assembleDebug
+    - name: Build APK
+      run: gradle assembleDebug
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
       with:
         name: UART-Scanner-debug
         path: app/build/outputs/apk/debug/*.apk
-        
